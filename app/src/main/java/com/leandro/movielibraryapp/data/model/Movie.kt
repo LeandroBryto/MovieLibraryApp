@@ -1,4 +1,4 @@
-package com.leandro.moviecatalogapp.data.model
+package com.leandro.movielibraryapp.data.model
 
 import com.google.gson.annotations.SerializedName
 
