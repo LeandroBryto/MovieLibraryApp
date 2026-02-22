@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -102,7 +103,6 @@ fun DetailScreen(movieState: Resource<MovieDetails>, onBack: () -> Unit) {
         }
     }
 }
-
 @Composable
 fun MovieDetailContent(movie: MovieDetails) {
     Column(
@@ -160,6 +160,34 @@ fun MovieDetailContent(movie: MovieDetails) {
             color = Color.LightGray,
             fontSize = 14.sp
         )
-        Spacer(modifier = Modifier.height(16.dp))
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Avaliações",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            color = Color.White
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Aqui vai o conteúdo da review que vem da API. Com o maxLines definido como 3, se o comentário do usuário for muito longo, o sistema vai cortar automaticamente e colocar reticências no final para não quebrar o seu layout.",
+            modifier = Modifier.padding(horizontal = 16.dp),
+            color = Color.LightGray,
+            fontSize = 14.sp,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
     }
+}
+
+fun formatRuntime(runtime: Int?): String {
+    if (runtime == null || runtime == 0) return "Duração desconhecida"
+    val hours = runtime / 60
+    val minutes = runtime % 60
+    return "${hours}h ${minutes}min"
 }
