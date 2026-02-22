@@ -2,6 +2,7 @@ package com.leandro.movielibraryapp.data.api
 
 import com.leandro.movielibraryapp.data.model.MovieDetails
 import com.leandro.movielibraryapp.data.model.MovieResponse
+import com.leandro.movielibraryapp.data.model.ReviewResponse
 import com.leandro.movielibraryapp.util.Constants
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -39,4 +40,18 @@ interface TMDBService {
         @Query("api_key") apiKey: String = Constants.API_KEY,
         @Query("language") language: String = "pt-BR"
     ): MovieDetails
+
+    @GET("movie/{movie_id}/similar")
+    suspend fun getSimilarMovies(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String = Constants.API_KEY,
+        @Query("language") language: String = "pt-BR"
+    ): MovieResponse
+
+    @GET("movie/{movie_id}/reviews")
+    suspend fun getMovieReviews(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String = Constants.API_KEY,
+        @Query("language") language: String = "en-US"
+    ): ReviewResponse
 }
