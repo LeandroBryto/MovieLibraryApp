@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +52,7 @@ import coil.compose.AsyncImage
 import com.leandro.movielibraryapp.data.model.Movie
 import com.leandro.movielibraryapp.data.model.MovieDetails
 import com.leandro.movielibraryapp.data.model.MovieResponse
+import com.leandro.movielibraryapp.data.model.Review
 import com.leandro.movielibraryapp.data.model.ReviewResponse
 import com.leandro.movielibraryapp.di.AppContainer
 import com.leandro.movielibraryapp.util.Resource
@@ -65,18 +67,11 @@ class DetailActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             val movieDetailsState by viewModel.movieDetails.collectAsState()
             val similarMoviesState by viewModel.similarMovies.collectAsState()
             val movieReviewsState by viewModel.movieReviews.collectAsState()
-
-            DetailScreen(
-                movieState = movieDetailsState,
-                similarState = similarMoviesState,
-                reviewsState = movieReviewsState,
-                onBack = { finish() }
-            )
+            DetailScreen(movieDetailsState, similarMoviesState, movieReviewsState, onBack = { finish() })
         }
     }
 }
@@ -90,26 +85,15 @@ fun DetailScreen(
     onBack: () -> Unit
 ) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Detalhes", color = Color.White) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF1C1C1C))
-            )
-        },
         containerColor = Color(0xFF121212)
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when (movieState) {
                 is Resource.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                is Resource.Error -> Text(movieState.message ?: "Erro ao carregar", color = Color.Red, modifier = Modifier.align(Alignment.Center))
+                is Resource.Error -> Text(movieState.message ?: "Erro", color = Color.Red, modifier = Modifier.align(Alignment.Center))
                 is Resource.Success -> {
                     movieState.data?.let {
-                        MovieDetailContent(it, similarState, reviewsState)
+                        MovieDetailContent(movie = it, similarState = similarState, reviewsState = reviewsState, onBack = onBack)
                     }
                 }
             }
@@ -118,63 +102,102 @@ fun DetailScreen(
 }
 
 @Composable
-fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse>, reviewsState: Resource<ReviewResponse>) {
+fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse>, reviewsState: Resource<ReviewResponse>, onBack: () -> Unit) {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
 
-        AsyncImage(
-            model = "https://image.tmdb.org/t/p/w780${movie.backdropPath}",
-            contentDescription = null,
-            modifier = Modifier.fillMaxWidth().height(220.dp),
-            contentScale = ContentScale.Crop
-        )
-
-        Row(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
             AsyncImage(
-                model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                model = "https://image.tmdb.org/t/p/w780${movie.backdropPath}",
                 contentDescription = null,
-                modifier = Modifier.width(110.dp).height(160.dp).clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                alpha = 0.4f
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(movie.title ?: "", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = formatRuntime(movie.runtime), color = Color.Yellow, fontWeight = FontWeight.Medium)
-                Text(text = "Nota: ${movie.voteAverage}", color = Color.LightGray, fontSize = 14.sp)
+            IconButton(onClick = onBack, modifier = Modifier.padding(8.dp)) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar", tint = Color.White)
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(movie.title ?: "", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(formatRuntime(movie.runtime), color = Color.LightGray, fontSize = 14.sp)
+                    Text("Nota: ${movie.voteAverage} / 10", color = Color.Yellow, fontSize = 14.sp)
+                }
+
+                AsyncImage(
+                    model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(150.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
             }
         }
 
-        Text("Sinopse", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(horizontal = 16.dp), color = Color.White)
-        Text(movie.overview ?: "", modifier = Modifier.padding(16.dp), color = Color.LightGray, fontSize = 14.sp)
+        Text("Sinopse", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(16.dp), color = Color.White)
+        Text(movie.overview ?: "", modifier = Modifier.padding(horizontal = 16.dp), color = Color.LightGray)
 
-        Text("Filmes Similares", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp), color = Color.White)
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text("Comentários", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 16.dp), color = Color.White)
+        when(reviewsState) {
+            is Resource.Success -> {
+                val reviews = reviewsState.data?.results ?: emptyList()
+                Column(modifier = Modifier.padding(16.dp)) {
+                    if (reviews.isEmpty()) {
+                        Text("Sem comentários.", color = Color.Gray)
+                    } else {
+                        reviews.take(3).forEach { review ->
+                            ReviewItem(review = review)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
+                }
+            }
+            else -> { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
+        }
+
+        Text("Mais como este", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(16.dp), color = Color.White)
         when(similarState) {
             is Resource.Success -> {
                 LazyRow(contentPadding = PaddingValues(horizontal = 16.dp)) {
-                    items(similarState.data?.results ?: emptyList()) { similarMovie ->
-                        SimilarMovieItem(movie = similarMovie)
+                    items(similarState.data?.results ?: emptyList()) { item ->
+                        SimilarMovieItem(movie = item)
                     }
                 }
             }
-            is Resource.Loading -> LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
             else -> {}
         }
+        Spacer(modifier = Modifier.height(32.dp))
+    }
+}
 
-        Text("Avaliações", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp), color = Color.White)
-        when(reviewsState) {
-            is Resource.Success -> {
-                if (reviewsState.data?.results.isNullOrEmpty()) {
-                    Text("Nenhuma avaliação disponível.", modifier = Modifier.padding(16.dp), color = Color.Gray)
-                } else {
-                    reviewsState.data?.results?.forEach { review ->
-                        ReviewItem(review = review)
-                    }
-                }
-            }
-            else -> {}
-        }
-        Spacer(modifier = Modifier.height(24.dp))
+@Composable
+fun ReviewItem(review: Review) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF1E1E1E), RoundedCornerShape(8.dp))
+            .padding(12.dp)
+    ) {
+        Text(review.author, fontWeight = FontWeight.Bold, color = Color.White, fontSize = 14.sp)
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = review.content,
+            color = Color.LightGray,
+            fontSize = 13.sp,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -182,46 +205,38 @@ fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse
 fun SimilarMovieItem(movie: Movie) {
     val context = LocalContext.current
     Column(
-        modifier = Modifier.width(120.dp).padding(end = 12.dp).clickable {
-            val intent = Intent(context, DetailActivity::class.java).apply {
-                putExtra("MOVIE_ID", movie.id)
+        modifier = Modifier
+            .width(120.dp)
+            .padding(end = 12.dp)
+            .clickable {
+                val intent = Intent(context, DetailActivity::class.java).apply {
+                    putExtra("MOVIE_ID", movie.id)
+                }
+                context.startActivity(intent)
             }
-            context.startActivity(intent)
-        }
     ) {
         AsyncImage(
             model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
-            contentDescription = null,
-            modifier = Modifier.height(170.dp).clip(RoundedCornerShape(8.dp)),
+            contentDescription = movie.title,
+            modifier = Modifier
+                .height(180.dp)
+                .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.Crop
         )
-        Text(movie.title ?: "", color = Color.White, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-    }
-}
-
-@Composable
-fun ReviewItem(review: com.leandro.movielibraryapp.data.model.Review) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF252525)),
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth()
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Text(review.author, fontWeight = FontWeight.Bold, color = Color.Yellow, fontSize = 14.sp)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = review.content,
-                color = Color.LightGray,
-                fontSize = 13.sp,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = movie.title ?: "",
+            color = Color.LightGray,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
 fun formatRuntime(runtime: Int?): String {
-    if (runtime == null || runtime == 0) return "Duração desconhecida"
-    val hours = runtime / 60
-    val minutes = runtime % 60
-    return "${hours}h ${minutes}min"
+    if (runtime == null || runtime == 0) return "0 min"
+    val h = runtime / 60
+    val m = runtime % 60
+    return "${h}h ${m}min"
 }

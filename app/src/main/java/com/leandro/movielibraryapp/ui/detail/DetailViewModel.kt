@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.leandro.movielibraryapp.data.model.MovieDetails
 import com.leandro.movielibraryapp.data.model.MovieResponse
+import com.leandro.movielibraryapp.data.model.Review
 import com.leandro.movielibraryapp.data.model.ReviewResponse
 import com.leandro.movielibraryapp.data.repository.MovieRepository
 import com.leandro.movielibraryapp.util.Resource
@@ -24,32 +25,41 @@ class DetailViewModel(private val repository: MovieRepository, private val movie
     val movieReviews: StateFlow<Resource<ReviewResponse>> = _movieReviews
 
     init {
-        fetchAllDetails(movieId)
+        fetchAllData(movieId)
     }
 
-    private fun fetchAllDetails(id: Int) {
+    private fun fetchAllData(id: Int) {
         viewModelScope.launch {
-            _movieDetails.value = Resource.Loading()
             try {
                 _movieDetails.value = Resource.Success(repository.getMovieDetails(id))
             } catch (e: Exception) {
-                _movieDetails.value = Resource.Error(e.message ?: "Erro ao carregar detalhes do filme.")
+                _movieDetails.value = Resource.Error(e.message ?: "Erro nos detalhes")
             }
         }
 
         viewModelScope.launch {
-            _similarMovies.value = Resource.Loading()
             try {
                 _similarMovies.value = Resource.Success(repository.getSimilarMovies(id))
             } catch (e: Exception) {
-                _similarMovies.value = Resource.Error(e.message ?: "Erro ao carregar filmes similares.")
+                _similarMovies.value = Resource.Error(e.message ?: "Erro nos similares")
             }
         }
 
         viewModelScope.launch {
             _movieReviews.value = Resource.Loading()
             try {
-                _movieReviews.value = Resource.Success(repository.getMovieReviews(id))
+                val response = repository.getMovieReviews(id)
+
+                if (response.results.isEmpty()) {
+                    val mockReview = Review(
+                        author = "Usuário VIP",
+                        content = "Este filme é excelente! A fotografia e a atuação estão impecáveis. Recomendo a todos que gostam de uma boa história bem contada. (Nota: Review gerada pois a API não possui comentários para este título)."
+                    )
+                    _movieReviews.value = Resource.Success(ReviewResponse(listOf(mockReview)))
+                } else {
+                    _movieReviews.value = Resource.Success(response)
+                }
+
             } catch (e: Exception) {
                 _movieReviews.value = Resource.Error(e.message ?: "Erro ao carregar avaliações.")
             }
