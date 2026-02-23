@@ -56,6 +56,7 @@ import com.leandro.movielibraryapp.data.model.Review
 import com.leandro.movielibraryapp.data.model.ReviewResponse
 import com.leandro.movielibraryapp.di.AppContainer
 import com.leandro.movielibraryapp.util.Resource
+import java.util.Locale
 
 class DetailActivity : ComponentActivity() {
 
@@ -105,7 +106,7 @@ fun DetailScreen(
 fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse>, reviewsState: Resource<ReviewResponse>, onBack: () -> Unit) {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
 
-        Box(modifier = Modifier.fillMaxWidth().height(200.dp)) {
+        Box(modifier = Modifier.fillMaxWidth().height(210.dp)) {
             AsyncImage(
                 model = "https://image.tmdb.org/t/p/w780${movie.backdropPath}",
                 contentDescription = null,
@@ -128,7 +129,7 @@ fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse
                 Column(modifier = Modifier.weight(1f).padding(bottom = 80.dp)) {
                     Text(movie.title ?: "", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     Text(formatRuntime(movie.runtime), color = Color.LightGray, fontSize = 14.sp)
-                    Text("⭐ Nota: ${movie.voteAverage} / 10 Média de Votos", color = Color.Yellow, fontSize = 14.sp)
+                    Text("⭐ Nota: ${String.format(Locale.US, "%.1f", movie.voteAverage)} / 10 Média de Votos", color = Color.Yellow, fontSize = 14.sp)
                 }
 
                 AsyncImage(
