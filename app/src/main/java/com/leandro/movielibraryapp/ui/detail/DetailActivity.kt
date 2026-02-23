@@ -128,7 +128,7 @@ fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse
                 Column(modifier = Modifier.weight(1f)) {
                     Text(movie.title ?: "", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     Text(formatRuntime(movie.runtime), color = Color.LightGray, fontSize = 14.sp)
-                    Text("Nota: ${movie.voteAverage} / 10", color = Color.Yellow, fontSize = 14.sp)
+                    Text("⭐ Nota: ${movie.voteAverage} / 10", color = Color.Yellow, fontSize = 14.sp)
                 }
 
                 AsyncImage(
