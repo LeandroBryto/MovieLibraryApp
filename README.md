@@ -3,19 +3,19 @@
 ![Badge](https://img.shields.io/badge/arch-MVVM-orange?style=for-the-badge)
 ![Badge](https://img.shields.io/badge/minSDK-24-green?style=for-the-badge)
 
-## 📖 Descrição
+##  Descrição
 
 **MovieLibraryApp** é um catálogo de filmes desenvolvido como parte de um desafio técnico para demonstrar habilidades em desenvolvimento Android moderno. O aplicativo consome a API do [The Movie Database (TMDB)](https://www.themoviedb.org/) para exibir listas de filmes populares, em exibição, e permitir a visualização de detalhes, reviews e filmes similares.
 
 O projeto foi estruturado com foco em boas práticas, escalabilidade e manutenibilidade, utilizando uma arquitetura robusta e tecnologias atuais do ecossistema Android.
 
-## 📱 Telas
+##  Telas
 
 | Splash | Lista de Filmes | Detalhes do Filme |
 | :---: |:---:|:---:|
 | <img src="./screenshots/splash.png" width="250"> | <img src="./screenshots/lista.png" width="250"> | <img src="./screenshots/detalhe.png" width="250"> |
 
-## 🛠️ Tecnologias e Arquitetura
+##  Tecnologias e Arquitetura
 
 Este projeto foi construído utilizando um conjunto de ferramentas modernas e padrões de arquitetura para garantir um código limpo, testável e performático.
 
@@ -40,24 +40,24 @@ Este projeto foi construído utilizando um conjunto de ferramentas modernas e pa
 - **Tratamento de Estado e Erros:** Uso de uma `sealed class` (`Resource`) para encapsular os estados de UI (Loading, Success, Error), provendo um feedback claro para o usuário em caso de falhas na comunicação com a API.
 - **Organização de Pacotes:** Estrutura de pacotes por camada (`data`, `ui`, `util`), promovendo alta coesão e baixo acoplamento.
 
-## ✅ Funcionalidades Implementadas
+##  Funcionalidades Implementadas
 
-- [x] **Splash Screen:** Tela de entrada com duração controlada (2 segundos).
-- [x] **Tela de Listas:**
-  - [x] Exibição de 4 categorias de filmes em `RecyclerViews` horizontais:
+- **Splash Screen:** Tela de entrada com duração controlada (2 segundos).
+- **Tela de Listas:**
+  - Exibição de 4 categorias de filmes em `RecyclerViews` horizontais:
     - Em Exibição (`Now Playing`)
     - Em Breve (`Upcoming`)
     - Mais Populares (`Popular`)
     - Melhores Avaliados (`Top Rated`)
-- [x] **Tela de Detalhes:**
-  - [x] Exibição de pôster, título, sinopse e nota.
-  - [x] Conversão da duração de minutos para o formato `X hora(s) Y minuto(s)`.
-  - [x] Exibição de Reviews (limitados a 3 linhas).
+- **Tela de Detalhes:**
+  - Exibição de pôster, título, sinopse e nota.
+  - Conversão da duração de minutos para o formato `X hora(s) Y minuto(s)`.
+  - Exibição de Reviews (limitados a 3 linhas).
   - [x] Exibição de Filmes Similares.
-- [x] **Tratamento de Erros de API:** A interface exibe um estado de erro caso a chamada à API falhe.
-- [x] **Navegação:** Fluxo de navegação completo entre as telas, incluindo o botão "voltar".
+- **Tratamento de Erros de API:** A interface exibe um estado de erro caso a chamada à API falhe.
+- **Navegação:** Fluxo de navegação completo entre as telas, incluindo o botão "voltar".
 
-## 🏗️ Arquitetura
+##  Arquitetura
 
 O projeto adota a arquitetura **MVVM (Model-View-ViewModel)**. A escolha se baseia na excelente separação de responsabilidades que ela proporciona, recomendada oficialmente pelo Google.
 
@@ -65,7 +65,7 @@ O projeto adota a arquitetura **MVVM (Model-View-ViewModel)**. A escolha se base
 - **ViewModel:** Sobrevive a mudanças de configuração e é responsável por gerenciar o estado da UI, delegando a busca e o processamento de dados para a camada de `Repository`.
 - **Model (Repository/API):** Abstrai a origem dos dados. O `MovieRepository` é o único ponto de acesso aos dados para o resto do app, facilitando a manutenção e a possibilidade de adicionar fontes de dados futuras (como um cache local).
 
-## 🚀 Como Rodar o Projeto
+##  Como Rodar o Projeto
 
 Para clonar e rodar esta aplicação, siga os passos abaixo.
 
@@ -88,7 +88,7 @@ Para clonar e rodar esta aplicação, siga os passos abaixo.
 
 3. **Sincronize e Rode o projeto no Android Studio.**
 
-## ✨ Diferenciais e Boas Práticas
+##  Diferenciais e Boas Práticas
 
 - **Código Limpo:** Nomenclatura clara e consistente para variáveis, métodos e classes.
 - **Organização:** Pacotes bem definidos que facilitam a navegação e a manutenção do projeto.
