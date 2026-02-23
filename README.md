@@ -9,7 +9,7 @@
 
 O projeto foi estruturado com foco em boas práticas, escalabilidade e manutenibilidade, utilizando uma arquitetura robusta e tecnologias atuais do ecossistema Android.
 
-## 🛠 Tecnologias e Arquitetura
+##  Tecnologias e Arquitetura
 
 Este projeto foi construído utilizando um conjunto de ferramentas modernas e padrões de arquitetura para garantir um código limpo, testável e performático.
 
