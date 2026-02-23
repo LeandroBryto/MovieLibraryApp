@@ -8,7 +8,7 @@
         <!-- Alterando para transparente para forçar a remoção do círculo -->
         <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
 
-        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_movie</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo_wrapper</item>
 
         <item name="windowSplashScreenAnimationDuration">2000</item>
 
