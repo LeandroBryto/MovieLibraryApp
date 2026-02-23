@@ -136,7 +136,7 @@ fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse
                         fontWeight = FontWeight.Normal,
                         letterSpacing = 0.sp
                     )
-                    Spacer(modifier = Modifier.height(3.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "⭐ Nota: ${String.format(Locale.US, "%.1f", movie.voteAverage)} / 10 Média de Votos",
                         color = Color.LightGray,
