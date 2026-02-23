@@ -128,6 +128,7 @@ fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse
             ) {
                 Column(modifier = Modifier.weight(1f).padding(bottom = 80.dp)) {
                     Text(movie.title ?: "", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = formatRuntime(movie.runtime),
                         color = Color.White,
@@ -135,6 +136,7 @@ fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse
                         fontWeight = FontWeight.Normal,
                         letterSpacing = 0.sp
                     )
+                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = "⭐ Nota: ${String.format(Locale.US, "%.1f", movie.voteAverage)} / 10 Média de Votos",
                         color = Color.LightGray,
@@ -160,7 +162,7 @@ fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse
         Text("Sinopse", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(16.dp), color = Color.White)
         Text(movie.overview ?: "", modifier = Modifier.padding(horizontal = 16.dp), color = Color.LightGray)
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text("Comentários", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 16.dp), color = Color.White)
         when(reviewsState) {
@@ -191,7 +193,7 @@ fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse
             }
             else -> {}
         }
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(25.dp))
     }
 }
 
