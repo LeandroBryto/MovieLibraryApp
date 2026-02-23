@@ -128,8 +128,21 @@ fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse
             ) {
                 Column(modifier = Modifier.weight(1f).padding(bottom = 80.dp)) {
                     Text(movie.title ?: "", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                    Text(formatRuntime(movie.runtime), color = Color.LightGray, fontSize = 14.sp)
-                    Text("⭐ Nota: ${String.format(Locale.US, "%.1f", movie.voteAverage)} / 10 Média de Votos", color = Color.Yellow, fontSize = 14.sp)
+                    Text(
+                        text = formatRuntime(movie.runtime),
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Normal,
+                        letterSpacing = 0.sp
+                    )
+                    Text(
+                        text = "⭐ Nota: ${String.format(Locale.US, "%.1f", movie.voteAverage)} / 10 Média de Votos",
+                        color = Color.LightGray,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Normal,
+                        letterSpacing = 0.sp,
+
+                    )
                 }
 
                 AsyncImage(
@@ -236,8 +249,8 @@ fun SimilarMovieItem(movie: Movie) {
 }
 
 fun formatRuntime(runtime: Int?): String {
-    if (runtime == null || runtime == 0) return "0 min"
+    if (runtime == null || runtime == 0) return "0 minuto(s)"
     val h = runtime / 60
     val m = runtime % 60
-    return "${h}h ${m}min"
+    return "${h} hora(s) ${m} minuto(s)"
 }
