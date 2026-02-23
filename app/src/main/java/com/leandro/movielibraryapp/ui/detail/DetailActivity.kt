@@ -105,7 +105,7 @@ fun DetailScreen(
 fun MovieDetailContent(movie: MovieDetails, similarState: Resource<MovieResponse>, reviewsState: Resource<ReviewResponse>, onBack: () -> Unit) {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
 
-        Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
+        Box(modifier = Modifier.fillMaxWidth().height(190.dp)) {
             AsyncImage(
                 model = "https://image.tmdb.org/t/p/w780${movie.backdropPath}",
                 contentDescription = null,
